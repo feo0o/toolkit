@@ -1,6 +1,7 @@
 package toolkit
 
 import (
+	"errors"
 	"os"
 	"path/filepath"
 )
@@ -21,9 +22,11 @@ func CreateFilePath(path string) (err error) {
 	}
 	if f != "" {
 		fp := filepath.Join(p, f)
-		_, err = os.Create(fp)
-		if err != nil {
-			return err
+		_, err = os.Stat(fp)
+		if errors.Is(err, os.ErrNotExist) {
+			if _, err = os.Create(fp); err != nil {
+				return err
+			}
 		}
 	}
 	return nil
